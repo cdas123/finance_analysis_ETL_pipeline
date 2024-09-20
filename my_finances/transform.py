@@ -27,7 +27,31 @@ def read_raw_data(conn, table_name):
 
  # Example transformation function
 def transform_data(df1, df2, on_column):
-    pd.merge(df1, df2, on=on_column, how=how)
+    
+    # Normalize column names
+    df1.columns = [col.strip().lower().replace(" ", "_") for col in df1.columns]
+    
+    # Fill missing values in a specific column (e.g., "buchungstext")
+    df1['buchungstext'] = df1['buchungstext'].fillna(df1['buchungstext'].mean())
+    
+    # Group by 'bunchungstag' and calculate total purchase and average transaction value
+    df_aggregated = df1.groupby('bunchungstag').agg({
+        'transaction_amount': ['sum', 'mean'],
+        'transaction_id': 'count'
+    }).reset_index()
+
+    # Rename the aggregated columns
+    df_aggregated.columns = ['bunchungstag', 'total_purchase', 'average_transaction_value', 'transaction_count']
+
+    # Merge the aggregated and pivot dataframes
+    df_final = pd.merge(df_aggregated, df2, on='bunchungstag', how='inner')
+    
+    
+    # Save the cleaned and transformed data for future use
+    df_final.to_csv("cleaned_transformed_data.csv", index=False)
+    print("Data cleaning and transformation completed.")
+    
+    return df_final
     
 
 def merge_and_store(conn, table1, table2, target_table, on_column):
