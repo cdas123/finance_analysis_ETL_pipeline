@@ -26,7 +26,7 @@ def read_raw_data(conn, table_name):
         return pd.read_sql(query, conn)
 
  # Example transformation function
-def transform_data(df1, df2, on_column):
+def transform_merge_data(df1, df2, on_column):
     
     # Normalize column names
     df1.columns = [col.strip().lower().replace(" ", "_") for col in df1.columns]
@@ -54,16 +54,13 @@ def transform_data(df1, df2, on_column):
     return df_final
     
 
-def merge_and_store(conn, table1, table2, target_table, on_column):
+def transform_and_merge(conn, table1, table2, target_table, on_column):
     # Step 1: Read data from both tables
     df1 = read_raw_data(conn, table1)
     df2 = read_raw_data(conn, table2)
 
     # Step 2: Merge the dataframes on the common column
-    merged_df = transform_data(df1, df2, on_column)
-
-    # Step 3: Write the merged data back to Snowflake
-    write_to_snowflake(conn, merged_df, target_table)
+    merged_df = transform_merge_data(df1, df2, on_column)
 
      
 

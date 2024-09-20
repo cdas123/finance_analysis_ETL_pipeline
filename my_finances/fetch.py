@@ -43,8 +43,8 @@ def load_dataframe_to_snowflake(df,table, schema):
 
     return success, nchunks, nrows
 
-# Main function
-def main():
+
+def fetch_csv():
     # Read CSV from S3
     df_ca = read_csv_from_s3('DE32100400000803506500_EUR_05-08-2024_1255.csv')
     df_visa = read_csv_from_s3('Visa_Premium-6550_05-08-2024_1254.csv')
@@ -64,7 +64,4 @@ def main():
     )
     
     print(f'Success: {success}, Number of chunks: {nchunks}, Number of rows: {nrows}')
-
-if __name__ == '__main__':
-    main()
 
