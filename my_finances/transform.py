@@ -8,18 +8,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Function to load DataFrame to Snowflake
-def fetch_dataframe_from_snowflake(df,table, schema):
-    conn = snowflake.connector.connect(
-        user=os.getenv('SNOWFLAKE_USER'),
-        password=os.getenv('SNOWFLAKE_PASSWORD'),
-        account=os.getenv('SNOWFLAKE_ACCOUNT'),
-        warehouse=os.getenv('SNOWFLAKE_WAREHOUSE'),
-        database=os.getenv('SNOWFLAKE_DATABASE'),
-        schema=schema,
-        table=table
-    )
-
     # Function to read raw data from a Snowflake table
 def read_raw_data(conn, table_name):
         query = f"SELECT * FROM {table_name}"
@@ -54,13 +42,14 @@ def transform_merge_data(df1, df2, on_column):
     return df_final
     
 
-def transform_and_merge(conn, table1, table2, target_table, on_column):
+def transform_and_merge(conn, table1:str, table2:str, on_column:str)-> Any:
     # Step 1: Read data from both tables
     df1 = read_raw_data(conn, table1)
     df2 = read_raw_data(conn, table2)
 
     # Step 2: Merge the dataframes on the common column
     merged_df = transform_merge_data(df1, df2, on_column)
+    return merged_df
 
      
 
